@@ -3,88 +3,99 @@ package DP;
 import java.util.*;
 
 /**
- * Last Attempt: 2026-01-02
- * Leetcode Link:
- * https://leetcode.com/problems/painting-a-grid-with-three-different-colors
- * 
+ * Last Attempt: 03 Jan 2026
+ * LeetCode:
+ * https://leetcode.com/problems/painting-a-grid-with-three-different-colors/description/
  * Approach:
- * 1: Generate all the possible string for a single row
+ * 1: Generate all the possible string for a single column since the max size of
+ * m would be 5
  * 2: Now pick one string from generated string and check it against all other
  * string recusively and once the grid is filled, add one to the total and
  * repeat it for all the strings
  * 3: You will encounter TLE, think how you can reuse the previously calculated
  * iterations
- * 
- * Time Complexity: O(6 * n * (6 * 3))
- * Space Complexity: O(12 * n) for memoization.
+ * Time(n): Refer code
+ * Space(n): O(S * n)
  */
 
 class Solution {
-    final int MOD = 1_000_000_007;
-    final char[] COLORS = { 'R', 'Y', 'G' };
+    private static final int MOD = 1_000_000_007;
+    private static final char[] colors = { 'r', 'b', 'g' };
+    private List<String> validColumnStates = new ArrayList<>();
+    private int[][] dp;
 
-    int[][] memo;
-    List<String> possibleStrings;
+    public int colorTheGrid(int m, int n) {
+        int result = 0;
 
-    public int numOfWays(int n) {
-        possibleStrings = new ArrayList<>();
-        generateValidRowConfigs(new StringBuilder());
+        // Generate all valid column color states for m rows
+        generateColumnStates(new StringBuilder(), m, ' ');
 
-        int possibleStringsCount = possibleStrings.size();
-        memo = new int[possibleStringsCount][n];
-        for (int[] row : memo)
+        dp = new int[validColumnStates.size()][n];
+
+        // Initialize DP table with -1 (unvisited states)
+        for (int[] row : dp) {
             Arrays.fill(row, -1);
-
-        int totalWays = 0;
-        for (int i = 0; i < possibleStringsCount; i++) {
-            totalWays = (totalWays + countWays(i, n - 1)) % MOD;
-        }
-        return totalWays;
-    }
-
-    // T.C(n): O(6 * n * (6 * 3)) {S: possibleStrings.size}
-    private int countWays(int prevStateIndex, int rowsRemaining) {
-        if (rowsRemaining == 0)
-            return 1;
-
-        if (memo[prevStateIndex][rowsRemaining] != -1)
-            return memo[prevStateIndex][rowsRemaining];
-
-        int ways = 0;
-        String prevRow = possibleStrings.get(prevStateIndex);
-        for (int currRowIndex = 0; currRowIndex < possibleStrings.size(); currRowIndex++) {
-            if (currRowIndex == prevStateIndex)
-                continue;
-
-            String currRow = possibleStrings.get(currRowIndex);
-            if (rowsAreCompatible(prevRow, currRow)) {
-                ways = (ways + countWays(currRowIndex, rowsRemaining - 1)) % MOD;
-            }
         }
 
-        return memo[prevStateIndex][rowsRemaining] = ways;
+        // Iterate through all valid column states and compute the total number of ways
+        for (int i = 0; i < validColumnStates.size(); i++) {
+            result = (result + solve(i, n - 1)) % MOD;
+        }
+
+        return result;
     }
 
-    private boolean rowsAreCompatible(String row1, String row2) {
-        return row1.charAt(0) != row2.charAt(0) &&
-                row1.charAt(1) != row2.charAt(1) &&
-                row1.charAt(2) != row2.charAt(2);
-    }
-
-    // T.C: O(3 * 2 * 1)
-    private void generateValidRowConfigs(StringBuilder string) {
-        if (string.length() == 3) {
-            possibleStrings.add(string.toString());
+    // T.C: O(3 * 2^(m-1))
+    // Generate all valid column color states for m rows
+    private void generateColumnStates(StringBuilder sb, int m, char lastColor) {
+        if (sb.length() == m) {
+            validColumnStates.add(sb.toString());
             return;
         }
 
-        int len = string.length();
-        for (char color : COLORS) {
-            if (len == 0 || string.charAt(len - 1) != color) {
-                string.append(color);
-                generateValidRowConfigs(string);
-                string.setLength(len); // backtrack
-            }
+        int len = sb.length();
+
+        // Try all possible colors (r, b, g) but avoid repeating the last color
+        for (char currentColor : colors) {
+            if (currentColor == lastColor)
+                continue;
+
+            sb.append(currentColor);
+            generateColumnStates(sb, m, currentColor);
+            sb.setLength(len);
         }
+    }
+
+    // T.C: O(n * S * (S * m)) {S: validColumnStates.size}
+    // Calculate the number of valid ways to color remaining columns from a given
+    // column state
+    private int solve(int prevStateIndex, int remainingColumns) {
+        if (remainingColumns == 0)
+            return 1;
+
+        if (dp[prevStateIndex][remainingColumns] != -1)
+            return dp[prevStateIndex][remainingColumns];
+
+        String prevState = validColumnStates.get(prevStateIndex);
+        int ways = 0;
+
+        // Check all valid next column states
+        for (int i = 0; i < validColumnStates.size(); i++) {
+            if (i == prevStateIndex)
+                continue;
+            if (isValid(prevState, validColumnStates.get(i)))
+                ways = (ways + solve(i, remainingColumns - 1)) % MOD;
+        }
+
+        return dp[prevStateIndex][remainingColumns] = ways;
+    }
+
+    // Check if two column states are valid (no adjacent cells have the same color)
+    private boolean isValid(String prevState, String nextState) {
+        for (int i = 0; i < prevState.length(); i++) {
+            if (prevState.charAt(i) == nextState.charAt(i))
+                return false;
+        }
+        return true;
     }
 }
