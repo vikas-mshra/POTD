@@ -4,6 +4,8 @@ import java.util.*;
 
 /**
  * Last Attempt: 2026-01-02
+ * Leetcode Link:
+ * https://leetcode.com/problems/painting-a-grid-with-three-different-colors
  * 
  * Approach:
  * 1: Generate all the possible string for a single row
