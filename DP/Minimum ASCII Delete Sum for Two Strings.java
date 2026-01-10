@@ -1,0 +1,38 @@
+package DP;
+
+/**
+    Last Attempt: 10 Jan 2026
+    LeetCode Link: https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/
+    Approach: Similar to find Longest Common Subsequence. Instead of increment the count by 1, increment the count by the (int) c. You will get the common sum between both the strings.
+    Time(n): O(m * n)
+    Space(n): O(m * n)
+*/
+class Solution {
+    public int minimumDeleteSum(String s1, String s2) {
+        int m = s1.length();
+        int n = s2.length();
+        int[][] dp = new int[m + 1][n + 1];
+
+        // DP to find max ASCII sum common subsequence
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + s1.charAt(i - 1);
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        int commonSum = dp[m][n];
+
+        // total ASCII sum of both strings
+        int totalSum = 0;
+        for (char c : s1.toCharArray())
+            totalSum += c;
+        for (char c : s2.toCharArray())
+            totalSum += c;
+
+        return totalSum - (2 * commonSum);
+    }
+}
