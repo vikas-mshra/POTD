@@ -28,37 +28,21 @@ class Solution {
         Collections.sort(horizontalBars);
         Collections.sort(verticalBars);
 
-        // Maps each horizontal bar to all possible vertical bars
-        // where a square hole could start
-        Map<Integer, List<Integer>> possibleIntersections = new HashMap<>();
+        int maxSquareArea = 0;
 
         // Find all valid (horizontal, vertical) starting points
         for (int i = 0; i < horizontalBars.size(); i++) {
-
+            int startRow = horizontalBars.get(i);
             // Skip consecutive horizontal bars to avoid duplicate calculations
-            if (i > 0 && horizontalBars.get(i) == horizontalBars.get(i - 1) + 1)
+            if (i > 0 && startRow == horizontalBars.get(i - 1) + 1)
                 continue;
 
             for (int j = 0; j < verticalBars.size(); j++) {
+                int startCol = verticalBars.get(j);
 
                 // Skip consecutive vertical bars to avoid duplicate calculations
-                if (j > 0 && verticalBars.get(j) == verticalBars.get(j - 1) + 1)
+                if (j > 0 && startCol == verticalBars.get(j - 1) + 1)
                     continue;
-
-                // Store intersection point
-                possibleIntersections
-                        .computeIfAbsent(horizontalBars.get(i), k -> new ArrayList<>())
-                        .add(verticalBars.get(j));
-            }
-        }
-
-        int maxSquareArea = 0;
-
-        // Evaluate square size for each valid intersection
-        for (int startRow : horizontalBars) {
-            List<Integer> startColumns = possibleIntersections.getOrDefault(startRow, Collections.emptyList());
-
-            for (int startCol : startColumns) {
 
                 // Count how many consecutive horizontal bars are removed downward
                 int verticalLength = 1;
@@ -81,6 +65,7 @@ class Solution {
                 maxSquareArea = Math.max(
                         maxSquareArea,
                         squareSide * squareSide);
+
             }
         }
 
