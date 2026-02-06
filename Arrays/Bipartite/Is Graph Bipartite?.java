@@ -36,3 +36,42 @@ class Solution {
         return true;
     }
 }
+
+/**
+  BFS Approach:
+    Time(n): O(V + E)
+    Space(n): O(V) {queue size max can be V}
+*/
+/**
+class Solution {
+    public boolean isBipartite(int[][] graph) {
+        int nodes = graph.length;
+
+        Queue<Integer> queue = new LinkedList<>();
+        int[] color = new int[nodes];
+        Arrays.fill(color, -1);
+
+        // 1: Iterate using BFS
+        for (int i = 0; i < nodes; i++) {
+            if (color[i] == -1) {
+                queue.add(i);
+                color[i] = 0;
+
+                while (!queue.isEmpty()) {
+                    int u = queue.poll();
+
+                    for (int v: graph[u]) {
+                        if (color[v] == color[u])
+                            return false;
+                        if (color[v] == -1) {
+                            queue.add(v);
+                            color[v] = 1 - color[u];
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+}
+*/
