@@ -1,6 +1,50 @@
-package Arrays;
+package SlidingWindow;
 
 import java.util.*;
+
+/**
+    Last Attempt: 06 Feb 2026
+    LeetCode Link: https://leetcode.com/problems/minimum-removals-to-balance-array/
+    Approach: Use sliding window and check if the window is valid, then update the number of element to be remove. If the window is not valid, update your left pointer
+    Time(n): O(nlogn)
+    Space(n): O(1)
+*/
+class Solution {
+    public int minRemoval(int[] nums, int k) {
+        Arrays.sort(nums);
+        int n = nums.length;
+
+        int minElementsRemoved = Integer.MAX_VALUE;
+
+        int left = 0;
+        int right = 0;
+
+        // Maximum value allowed for the current window
+        long maxAllowedValue = (long) nums[left] * k;
+
+        while (right < n) {
+
+            // Window is valid: nums[right] satisfies max <= k * min
+            if (nums[right] <= maxAllowedValue) {
+
+                int windowSize = right - left + 1;
+                int elementsRemoved = n - windowSize;
+
+                minElementsRemoved = Math.min(minElementsRemoved, elementsRemoved);
+                right++;
+
+            } else {
+                // Shrink window from the left and update allowed maximum
+                left++;
+                maxAllowedValue = (long) nums[left] * k;
+            }
+        }
+
+        return minElementsRemoved;
+    }
+}
+
+
 /**
     Last Attempt: 05 Feb 2026
     LeetCode Link: https://leetcode.com/problems/minimum-removals-to-balance-array/
@@ -8,7 +52,7 @@ import java.util.*;
     Time(n): O(nlogn + nlogn)
     Space(n): O(n)
 */
-class Solution {
+class Solution2 {
     public int minRemoval(int[] nums, int k) {
         int n = nums.length;
         Arrays.sort(nums);
