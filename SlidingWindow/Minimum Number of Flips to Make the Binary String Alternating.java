@@ -1,17 +1,13 @@
 package SlidingWindow;
 
 /**
- * Last Attempt: 7th March 2026
- * Leetcode Link:
- * https://leetcode.com/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/description/
- * Approach: There is only two possible ways you can build the string i.e., it
- * would either start with 0 or 1
- * - Trick: when you have the check all the possible strings in a circular way,
- * concate the original string two times
- * - Use a sliding window technique to find for a size of n length substring,
- * how many flips are needed and keep track of min
- * Time(n): O(n)
- * Space(n): O(n)
+    Last Attempt: 7th March 2026
+    Leetcode Link: https://leetcode.com/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/description/
+    Approach: There is only two possible ways you can build the string i.e., it would either start with 0 or 1
+        - Trick: when you have the check all the possible strings in a circular way, concate the original string two times
+        - Use a sliding window technique to find for a size of n length substring, how many flips are needed and keep track of min
+    Time(n): O(n)
+    Space(n): O(n)
  */
 class Solution {
     public int minFlips(String s) {
